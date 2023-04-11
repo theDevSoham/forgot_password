@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
 const { HOST_MAIL, HOST_PASSWORD } = process.env;
 

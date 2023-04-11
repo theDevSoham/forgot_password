@@ -5,18 +5,33 @@
     <%- include('../partials/head'); %>
 </head>
 
-<body class="container">
+<body class="container" onload="setToken()">
 
     <header>
         <%- include('../partials/header'); %>
     </header>
 
     <main class="container my-4">
-        <form method="post" action="/forgot">
+        <form method="post" action="/reset">
+
+            <!-- Email input -->
+
+            <input type="hidden" name="token" value="" />
+
             <!-- Password input -->
             <div class="form-outline mb-4">
                 <label class="form-label" for="form2Example2">Password</label>
                 <input type="password" id="form2Example2" class="form-control" name="password" />
+            </div>
+
+            <!-- Reset Password -->
+
+            <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                <div class="form-outline flex-fill mb-0">
+                    <label class="form-label" for="form3Example4cd">Repeat your password</label>
+                    <input type="password" id="form3Example4cd" class="form-control" name="repeat_pass" />
+                </div>
             </div>
 
             <!-- Submit button -->
@@ -27,6 +42,15 @@
     <footer>
         <%- include('../partials/footer'); %>
     </footer>
+
+    <script>
+        function setToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            console.log(token);
+            document.getElementsByName('token')[0].value = token;
+        }
+    </script>
 
 </body>
 
