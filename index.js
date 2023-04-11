@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const setUser = require('./textDB/setUser');
-const validateUser = require('./middlewares/validateUser');
+const { validateUser, validateWithoutPassword } = require('./middlewares/validateUser');
+const { sendMail, makeToken } = require('./helpers/email');
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -17,6 +18,16 @@ app.get('/', (req, res) => {
 
 app.get('/signin', (req, res) => {
     res.render('pages/signIn');
+});
+
+app.get('/forget', (req, res) => {
+    res.render('pages/forget');
+});
+
+app.get('/reset', (req, res) => {
+    const token = req.params.token;
+
+    res.render('pages/reset', { token });
 });
 
 app.post('/', (req, res) => {
@@ -53,6 +64,25 @@ app.post('/signin', validateUser, (req, res) => {
         label: "Go to home",
         link: "/"
     });
+});
+
+app.post('/forget', validateWithoutPassword, (req, res) => {
+
+    const token = makeToken(res.locals.user.email);
+
+    const link = `http://localhost:8080/reset?token=${token}`;
+
+    try {
+        sendMail(req.body.email, "Reset password", `<a href=${link}> Click here to reset password </a>`);
+        res.render('pages/success', {
+            message: `A confirmation link is sent to ${req.body.email}`,
+            label: "Go to home",
+            link: "/"
+        });
+    } catch (error) {
+        res.render("pages/error", { message: error.message });
+        return;
+    }
 });
 
 app.listen(port, () => {
